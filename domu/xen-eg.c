@@ -255,7 +255,8 @@ kmalloc()和__get_free_pages()申请的内存位于物理内存映射区域（�
 *
 */
 //order for page size 16*1024=16KB
-int order = get_order(16*1024);
+//int order = get_order(16*1024);
+//printk("\nxen:DomU: Page size = %d",PAGE_SIZE);
 
 
 /*
@@ -263,8 +264,9 @@ int order = get_order(16*1024);
 * a highmem page
 * order MAX_ORDER=10 or 11, usually less than 5
 */
-
+int order = 10;
 //page = __get_free_pages(GFP_KERNEL, 1);
+printk("Now try to allocate 2^%d pages, of which page size is %d",order,PAGE_SIZE);
 page = __get_free_pages(GFP_KERNEL, order);
 
 
