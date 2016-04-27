@@ -247,7 +247,27 @@ kmalloc()和__get_free_pages()申请的内存位于物理内存映射区域（�
 固定的偏移，因此存在简单的转换关系。而vmalloc()在虚拟内存空间给出一块连续的内存空间
 （>896,虚拟地址上连续），实质上，这片连续的虚拟内存在物理内存中并不一定连续，
 而vmalloc()申请的虚拟内存和物理内存之间也没有简单的换算关系。*/
-page = __get_free_pages(GFP_KERNEL, 1);
+
+
+/*
+*get_order function calculate order number
+*
+*
+*/
+//order for page size 16*1024=16KB
+int order = get_order(16*1024);
+
+
+/*
+* __get_free_pages() returns a 32-bit address, which cannot represent
+* a highmem page
+* order MAX_ORDER=10 or 11, usually less than 5
+*/
+
+//page = __get_free_pages(GFP_KERNEL, 1);
+page = __get_free_pages(GFP_KERNEL, order);
+
+
 if (page == 0) {
 printk("\nxen:DomU: could not get free page");
 return 0;
@@ -258,8 +278,8 @@ return 0;
 
 sring = (struct as_sring*) page;
 
-SHARED_RING_INIT(sring); 
-/*前端分配一个用于共享通信 ring 的内存页, 授权它给后端domain, 并放授权引用到xenstore, 
+SHARED_RING_INIT(sring);
+/*前端分配一个用于共享通信 ring 的内存页, 授权它给后端domain, 并放授权引用到xenstore,
 这样后端就能 map 这个页. 有共享ring这个页是一个主页, 用于传递更多的授权引用*/
 
 /* info.ring is the front_ring structure */
@@ -268,8 +288,12 @@ FRONT_RING_INIT(&(info.ring), sring, PAGE_SIZE);
 #endif
 
 
+/*
+ VIRT <-> MACHINE conversion
+ mfn: machine frame numbers
 
-mfn = virt_to_mfn(page);//?????****
+*/
+mfn = virt_to_mfn(page);
 
 /*
 * The following grant table func is in drivers/xen/grant-table.c
@@ -277,13 +301,13 @@ mfn = virt_to_mfn(page);//?????****
 * be shared via the hypervisor fu[nction call gnttab_grant_foreign_access.
 * This call notifies the hypervisor that other domains are allowed to
 * access this page.
-* 
+*
 * gnttab_map() has been called earlier to setup gnttable_setup_table
 * during init phase, with a call to HYPERVISOR_grant_table_op(
 * GNTTAB_setup_table...) and
 * "shared" pages have been malloc'ed. This "shared" page is then used
 * below later during the actual grant of a ref by this DOM.
-* 
+*
 * gnttab_grant_foreign_access()
 * => get_free_entries
 * gnttab_free_head - points to the ref of the head
@@ -315,7 +339,8 @@ return 0;
 * sprintf of the same memory location and get the same characters.
 */
 
-strcpy((char*)page, "chixu:test");
+
+strcpy((char*)page, "chixu:test123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF");
 /*
 * TBD: Save gref to be sent via Xenstore to dom-0. As of now both the
 * gref and the event channel port id is sent manually during insmod
