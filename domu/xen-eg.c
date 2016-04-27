@@ -315,7 +315,7 @@ return 0;
 * sprintf of the same memory location and get the same characters.
 */
 
-strcpy((char*)page, "aseem sethi");
+strcpy((char*)page, "chixu:test");
 /*
 * TBD: Save gref to be sent via Xenstore to dom-0. As of now both the
 * gref and the event channel port id is sent manually during insmod
