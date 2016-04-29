@@ -19,7 +19,7 @@ $make clean <br>
 $make <br>
 
 Step 6: in dom0 insert the kernel module dom-.ko by <br>
-$insmode dom-.ko gref=XXX <br>
+$insmod dom-.ko gref=XXX <br>
 
 Step 7: in dom0 check the status by <br>
 $dmesg <br>
