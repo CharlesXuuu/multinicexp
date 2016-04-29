@@ -1,0 +1,26 @@
+#####################################################
+Experiment Environment:
+
+Host version: 
+(Shell$ uname -a)
+Linux energy 3.16.0-4-amd64 #1 SMP Debian 3.16.7-ckt25-1 (2016-03-06) x86_64 GNU/Linux
+
+Guest version:
+(Shell$ uname -a)
+Linux multinic 3.13.0-85-generic #129-Ubuntu SMP Thu Mar 17 20:50:15 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+#####################################################
+
+sudo apt-get install gcc g++
+
+
+#####################################################
+
+In domU:
+
+//Compile
+1. make  
+//Insert as a kernel module (First run the domU part then run the dom0 part)
+2. insmod xen-eg.ko 
+//Show message
+3. dmesg
+//Record "gref=" and used as an input parameter to run the dom0 part

@@ -121,14 +121,16 @@ unsigned long len, void *data)
 int value;
 
 printk("\nxen:domU: file_write %lu bytes", len);
-//copy_from_user函数的目的是从用户空间拷贝数据到内核空间，失败返回没有被拷贝的字节数，
-//成功返回0.
+//copy from user : copy data from user space to kernel space,
+//if failed return the bytes for the copied data
+//if succeed return 0
 //buff->proc
 if (copy_from_user(&proc_data[0], buff, len))
 return -EFAULT;
 proc_data[len] = '\x0';
 //printk(" ,%s", &proc_data[0]);
-value = simple_strtol(proc_data, 0, 10);//把一个字符串转换为一个有符号长整数
+value = simple_strtol(proc_data, 0, 10); //transfer string to a long signed int
+
 
 switch(value) {
 case 1:
@@ -145,6 +147,8 @@ int file_read (char* page, char**start, off_t off,
 int count, int *eof, void *data)
 {
 sprintf(page, "%s", proc_data);
+//
+
 //把格式化的数据写入某个字符串缓冲区 写入page
 return strlen(page);
 }
@@ -155,7 +159,7 @@ return strlen(page);
 * sends a requesst on the shared ring to the Dom0. This way we test the
 * event channel and shared ring routines.
 */
-int create_procfs_entry(void)//创建虚拟文件夹，及文件
+int create_procfs_entry(void)//create vitual folder and file
 {
 int ret = 0;
 
@@ -165,9 +169,11 @@ printk("\nxen:domU Could not create demo entry in procfs");
 ret = -EAGAIN;
 return ret;
 }
-/*要在 /proc 文件系统中创建一个虚拟文件，请使用 create_proc_entry 函数。这个函数可以接收一个文件名
-、一组权限和这个文件在 /proc 文件系统中出现的位置。create_proc_entry 的返回值
-是一个 proc_dir_entry 指针（或者为 NULL，说明在 create 时发生了错误）*/
+/*create_proc_entry() function create a virtual folder in the /proc folder
+this function take a file name, e.g. "file"; access info; location as the input, and
+return the proc_dir_entry pointer (NULL if failed)*/
+
+
 proc_file = create_proc_entry("file", 0600, proc_dir);
 if (proc_file) {
 proc_file->read_proc = file_read;
@@ -187,7 +193,7 @@ return ret;
 * Our interrupt handler for event channel that we set up
 */
 
-static irqreturn_t as_int (int irq, void *dev_id)//中断处理函数
+static irqreturn_t as_int (int irq, void *dev_id)//irq handler
 {
 struct as_response *ring_resp;
 RING_IDX i, rp;
@@ -342,7 +348,7 @@ return 0;
 */
 
 
-strcpy((char*)page, "chixu:test123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF123456789ABCDEF");
+strcpy((char*)page, "chixu:test123456789ABCDEF");
 /*
 * TBD: Save gref to be sent via Xenstore to dom-0. As of now both the
 * gref and the event channel port id is sent manually during insmod
