@@ -31,6 +31,15 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="dom0/dom-.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="domu/xen-eg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="domu/xen-eg.mod.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />
