@@ -135,14 +135,14 @@ ssize_t file_write (struct file *filp, const char __user *buff,
     int value;
 
     printk("\nxen:domU: file_write %lu bytes", len);
-//copy from user : copy data from user space to kernel space,
-//if failed return the bytes for the copied data
-//if succeed return 0
-//buff->proc
+    //copy from user : copy data from user space to kernel space,
+    //if failed return the bytes for the copied data
+    //if succeed return 0
+    //buff->proc
     if (copy_from_user(&proc_data[0], buff, len))
         return -EFAULT;
     proc_data[len] = '\x0';
-//printk(" ,%s", &proc_data[0]);
+    //printk(" ,%s", &proc_data[0]);
     value = simple_strtol(proc_data, 0, 10); //transfer string to a long signed int
 
 
@@ -169,16 +169,16 @@ int file_read (char* page, char**start, off_t off,
 }
 
 /*
-* We create a /proc/demo/file entry. When we write a "1" ino this file once
+* We create a /proc/memnet/filename entry. When we write a "1" into this file once
 * the module is loaded, the file_write function() above is called and this
-* sends a requesst on the shared ring to the Dom0. This way we test the
+* sends a request on the shared ring to the Dom0. This way we test the
 * event channel and shared ring routines.
 */
-int create_procfs_entry(void)//create vitual folder and file
+int create_procfs_entry(char* filename)//create vitual folder and file
 {
     int ret = 0;
 
-    proc_dir = proc_mkdir("demo", NULL);
+    proc_dir = proc_mkdir("memnet", NULL);
     if (!proc_dir)
     {
         printk("\nxen:domU Could not create demo entry in procfs");
@@ -190,7 +190,7 @@ int create_procfs_entry(void)//create vitual folder and file
     return the proc_dir_entry pointer (NULL if failed)*/
 
 
-    proc_file = create_proc_entry("file", 0600, proc_dir);
+    proc_file = create_proc_entry(filename, 0600, proc_dir);
     if (proc_file)
     {
         proc_file->read_proc = file_read;
@@ -201,7 +201,7 @@ int create_procfs_entry(void)//create vitual folder and file
     }
     else
     {
-        printk("\nxen:domU Could not create /proc/demo/file");
+        printk("\nxen:domU Could not create /proc/demo/"+filename);
         ret = -EAGAIN;
         return ret;
     }
@@ -266,7 +266,7 @@ int init_module(void)
     printk("Ready to open %s and send to Dom0.\n Then send to ip = %s, port = %d",filename, ip, port);
 
 
-    create_procfs_entry();
+    create_procfs_entry(filename);
 
 
     /*
