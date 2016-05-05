@@ -138,7 +138,7 @@ static int __init init_domumodule(void)
         printk("\nxen:DomU: could not get free page");
         return 0;
     }else{
-        printk("free page allocated.")
+        printk("free page allocated.");
     }
 
 
@@ -155,10 +155,12 @@ static int __init init_domumodule(void)
 
         return 0;
 
+    } else{
+        printk("Granted");
     }
 
     //strcpy((char*)page, &readbuf);
-    memcpy((char*)page,readbuf,1);
+    memcpy((char*)page,readbuf,8);
 
     printk("\n gref = %d", info.gref);
     return 0;
