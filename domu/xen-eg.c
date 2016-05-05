@@ -247,7 +247,8 @@ again:
 }
 #endif
 
-int __init init_domumodule(void)
+//int __init init_domumodule(void)
+int init_module()
 {
     int mfn;
 #ifdef ENABLE_EVENT_IRQ
@@ -406,7 +407,8 @@ int __init init_domumodule(void)
     return 0;
 }
 
-void __exit cleanup_domumodule(void)
+//void __exit cleanup_domumodule(void)
+void cleanup_module()
 {
     printk("\nCleanup grant ref:");
     if (gnttab_query_foreign_access(info.gref) == 0)
@@ -433,8 +435,8 @@ void __exit cleanup_domumodule(void)
     printk("....\n...");
 }
 
-module_init(init_domumodule);
-module_exit(cleanup_domumodule);
+//module_init(init_domumodule);
+//module_exit(cleanup_domumodule);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR(AUTHOR);
 MODULE_DESCRIPTION(DESCRIPTION);
