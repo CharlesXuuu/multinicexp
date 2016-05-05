@@ -37,9 +37,12 @@
 //#include <mach-xen/asm/maddr*.h>
 //#include <xenpvdrivers/grant_table.h>
 #include <xen/interface/grant_table.h>
+#include <xen-eg.h>
 
 #define AUTHOR "Charles Xu <xuchi.int@gmail.com>"
 #define DESCRIPTION "MemNet architecture domu module"
+
+#define DOM0_ID 0
 #define ENABLE_SHARED_RING 1
 #define SHARED_MEM 1
 #define ENABLE_EVENT_IRQ 1
@@ -79,6 +82,7 @@ struct info_t
     int irq;
     int port;
 } info;
+
 
 
 // Related the proc fs entries
