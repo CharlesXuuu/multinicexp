@@ -62,7 +62,7 @@ module_param(ip, charp, 0644);
 static int port;
 module_param(port, int, 0644);
 
-#define MAX_READBUFF_SIZE 1024
+#define MAX_READBUFF_SIZE 128
 
 static char writebuf[] = "";
 static char readbuf[MAX_READBUFF_SIZE];
@@ -127,7 +127,7 @@ static int __init init_domumodule(void)
     * a highmem page
     * order MAX_ORDER=10 or 11, usually less than 5
     */
-    int order = 5;
+    int order = 3;
     //page = __get_free_pages(GFP_KERNEL, 1);
     printk("Now try to allocate 2^%d pages, of which page size is %d",order,PAGE_SIZE);
     page = __get_free_pages(GFP_KERNEL, order);
