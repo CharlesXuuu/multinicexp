@@ -155,7 +155,7 @@ static irqreturn_t as_int (int irq, void *dev_id)//io环操作 **请求，应答
 }
 #endif
 
-int init_module(void)
+static int __init init_dom0module(void)
 {
     struct vm_struct *v_start;
 #if ENABLE_SRING
@@ -264,7 +264,7 @@ int init_module(void)
 }
 
 
-void cleanup_module(void)
+static void __exit cleanup_dom0module(void)
 {
     int ret;
 
@@ -286,5 +286,7 @@ void cleanup_module(void)
     printk("...\n");
 }
 
-
+module_init(init_dom0module);
+module_exit(cleanup_dom0module);
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Charles Xu");

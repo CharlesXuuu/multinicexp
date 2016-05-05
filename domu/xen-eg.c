@@ -439,3 +439,4 @@ void cleanup_module(void)
 
 
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Charles Xu");
