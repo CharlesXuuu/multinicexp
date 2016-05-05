@@ -157,7 +157,8 @@ static int __init init_domumodule(void)
 
     }
 
-    strcpy((char*)page, &readbuf);
+    //strcpy((char*)page, &readbuf);
+    memcpy((char*)page,readbuff,1);
 
     printk("\n gref = %d", info.gref);
     return 0;
