@@ -7,9 +7,7 @@
 #include <linux/errno.h>
 #include <linux/io.h>
 #include <linux/moduleparam.h>
-#include <net/sock.h>
-#include <net/pkt_sched.h>
-#include <net/arp.h>
+#include <linux/proc_fs.h>
 #include <asm/page.h>
 #include <asm/xen/page.h>
 #include <xen/evtchn.h>
@@ -26,7 +24,7 @@
 
 #define DOM0_ID 0
 //#define ENABLE_SHARED_RING 1
-//#define SHARED_MEM 1
+#define SHARED_MEM 1
 //#define ENABLE_EVENT_IRQ 1
 
 
@@ -72,7 +70,7 @@ static struct proc_dir_entry *proc_dir = NULL;
 static struct proc_dir_entry *proc_file = NULL;
 char proc_data[20];
 
-#ifdef SHARED_MEM
+#ifdef SHARED_RING
 /*
 * Send an request via the shared ring to Dom0, following by an INT
 */
@@ -110,6 +108,51 @@ int send_request_to_dom0(void)
     printk("...\n");
     return 0;
 }
+
+/*
+* Our interrupt handler for event channel that we set up
+*/
+static irqreturn_t as_int (int irq, void *dev_id)//irq handler
+{
+    struct as_response *ring_resp;
+    RING_IDX i, rp;
+
+    printk("\nxen:DomU: as_int called");
+again:
+    rp = info.ring.sring->rsp_prod;
+    printk("\nxen:DomU: ring pointers %d to %d", info.ring.rsp_cons, rp);
+    for(i=info.ring.rsp_cons; i != rp; i++)
+    {
+        unsigned long id;
+// what did we get from Dom0
+        ring_resp = RING_GET_RESPONSE(&(info.ring), i);
+        printk("\nxen:DomU: Recvd in IDX-%d, with id=%d, op=%d, st=%d",
+               i, ring_resp->id, ring_resp->operation, ring_resp->status);
+        id = ring_resp->id;
+        switch(ring_resp->operation)
+        {
+        case 0:
+            printk("\nxen:DomU: operation:0");
+            break;
+        default:
+            break;
+        }
+    }
+
+    info.ring.rsp_cons = i;
+    if (i != info.ring.req_prod_pvt)
+    {
+        int more_to_do;
+        RING_FINAL_CHECK_FOR_RESPONSES(&info.ring, more_to_do);
+        if(more_to_do)
+            goto again;
+    }
+    else
+        info.ring.sring->rsp_event = i+1;
+    return IRQ_HANDLED;
+}
+
+#endif // SHARED_RING
 
 ssize_t file_write (struct file *filp, const char __user *buff,
                     unsigned long len, void *data)
@@ -156,11 +199,11 @@ int file_read (char* page, char**start, off_t off,
 * sends a request on the shared ring to the Dom0. This way we test the
 * event channel and shared ring routines.
 */
-int create_procfs_entry(void)//create vitual folder and file
+int create_procfs_entry(char* filename)//create vitual folder and file
 {
     int ret = 0;
 
-    proc_dir = proc_mkdir("memnet", NULL);
+    proc_dir = proc_mkdir(filename, NULL);
     if (!proc_dir)
     {
         printk("\nxen:domU Could not create memnet entry in procfs");
@@ -183,57 +226,12 @@ int create_procfs_entry(void)//create vitual folder and file
     }
     else
     {
-        printk("\nxen:domU Could not create /proc/demo/"+filename);
+        printk("\nxen:domU Could not create proc file");
         ret = -EAGAIN;
         return ret;
     }
     return ret;
 }
-
-/*
-* Our interrupt handler for event channel that we set up
-*/
-
-static irqreturn_t as_int (int irq, void *dev_id)//irq handler
-{
-    struct as_response *ring_resp;
-    RING_IDX i, rp;
-
-    printk("\nxen:DomU: as_int called");
-again:
-    rp = info.ring.sring->rsp_prod;
-    printk("\nxen:DomU: ring pointers %d to %d", info.ring.rsp_cons, rp);
-    for(i=info.ring.rsp_cons; i != rp; i++)
-    {
-        unsigned long id;
-// what did we get from Dom0
-        ring_resp = RING_GET_RESPONSE(&(info.ring), i);
-        printk("\nxen:DomU: Recvd in IDX-%d, with id=%d, op=%d, st=%d",
-               i, ring_resp->id, ring_resp->operation, ring_resp->status);
-        id = ring_resp->id;
-        switch(ring_resp->operation)
-        {
-        case 0:
-            printk("\nxen:DomU: operation:0");
-            break;
-        default:
-            break;
-        }
-    }
-
-    info.ring.rsp_cons = i;
-    if (i != info.ring.req_prod_pvt)
-    {
-        int more_to_do;
-        RING_FINAL_CHECK_FOR_RESPONSES(&info.ring, more_to_do);
-        if(more_to_do)
-            goto again;
-    }
-    else
-        info.ring.sring->rsp_event = i+1;
-    return IRQ_HANDLED;
-}
-#endif
 
 static int __init init_domumodule(void)
 {
@@ -248,7 +246,7 @@ static int __init init_domumodule(void)
     printk("Ready to open %s and send to Dom0.\n Then send to ip = %s, port = %d",filename, ip, port);
 
 
-    //create_procfs_entry();
+    create_procfs_entry(filename);
 
 
     /*
