@@ -37,7 +37,8 @@
 //#include <mach-xen/asm/maddr*.h>
 //#include <xenpvdrivers/grant_table.h>
 #include <xen/interface/grant_table.h>
-#include <xen-eg.h>
+
+#include "xen-eg.h"
 
 #define AUTHOR "Charles Xu <xuchi.int@gmail.com>"
 #define DESCRIPTION "MemNet architecture domu module"
