@@ -41,9 +41,6 @@
 #define AUTHOR "Charles Xu <xuchi.int@gmail.com>"
 #define DESCRIPTION "MemNet architecture domu module"
 
-void test(){
-printk("test");
-}
 
 //module parameter
 static char *filename = "";
@@ -171,7 +168,7 @@ int file_read (char* page, char**start, off_t off,
 * sends a request on the shared ring to the Dom0. This way we test the
 * event channel and shared ring routines.
 */
-int create_procfs_entry(char* filename)//create vitual folder and file
+int create_procfs_entry(void)//create vitual folder and file
 {
     int ret = 0;
 
@@ -262,8 +259,8 @@ static int __init init_domumodule(void)
     //Command line parameter filename, ip, port
     printk("Ready to open %s and send to Dom0.\n Then send to ip = %s, port = %d",filename, ip, port);
 
-    test();
-    //create_procfs_entry(filename);
+
+    create_procfs_entry();
 
 
     /*
