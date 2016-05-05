@@ -168,7 +168,7 @@ int file_read (char* page, char**start, off_t off,
 * sends a request on the shared ring to the Dom0. This way we test the
 * event channel and shared ring routines.
 */
-int create_procfs_entry(char* filename)//create vitual folder and file
+static int create_procfs_entry(char* filename)//create vitual folder and file
 {
     int ret = 0;
 
@@ -247,7 +247,7 @@ again:
 }
 #endif
 
-int __init init_domumodule(void)
+static int __init init_domumodule(void)
 {
     int mfn;
 #ifdef ENABLE_EVENT_IRQ
@@ -406,7 +406,7 @@ int __init init_domumodule(void)
     return 0;
 }
 
-void __exit cleanup_domumodule(void)
+static void __exit cleanup_domumodule(void)
 {
     printk("\nCleanup grant ref:");
     if (gnttab_query_foreign_access(info.gref) == 0)
