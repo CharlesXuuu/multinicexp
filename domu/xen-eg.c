@@ -40,6 +40,9 @@
 
 #define AUTHOR "Charles Xu <xuchi.int@gmail.com>"
 #define DESCRIPTION "MemNet architecture domu module"
+#define ENABLE_SHARED_RING 1
+#define SHARED_MEM 1
+#define ENABLE_EVENT_IRQ 1
 
 
 //module parameter
@@ -77,7 +80,6 @@ struct info_t
     int port;
 } info;
 
-#define DOM0_ID 0
 
 // Related the proc fs entries
 static struct proc_dir_entry *proc_dir = NULL;
