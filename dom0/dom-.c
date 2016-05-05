@@ -24,6 +24,9 @@
 #include <xen/interface/grant_table.h>
 #endif
 
+#define AUTHOR "Charles Xu <xuchi.int@gmail.com>"
+#define DESCRIPTION "MemNet architecture dom0 module"
+
 
 struct gnttab_map_grant_ref   ops;//根据（dom，GR）奖对应的页映射到自己的地址空间
 struct gnttab_unmap_grant_ref unmap_ops;//撤销页映射
@@ -289,4 +292,5 @@ static void __exit cleanup_dom0module(void)
 module_init(init_dom0module);
 module_exit(cleanup_dom0module);
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Charles Xu");
+MODULE_AUTHOR(AUTHOR);
+MODULE_DESCRIPTION(DESCRIPTION);

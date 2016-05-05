@@ -23,29 +23,23 @@
 #include <asm/uaccess.h>
 #include <asm/page.h>
 #include <asm/xen/page.h>
-
 //#include <xenpvdrivers/evtchn.h>
 #include <xen/evtchn.h>
-
 //#include <xenpvdrivers/xenbus.h>
 #include <xen/xenbus.h>
-
 //#include <xenpvdrivers/interface/io/netif.h>
 #include <xen/interface/io/netif.h>
-
 //#include <xenpvdrivers/interface/memory.h>
 #include <xen/interface/memory.h>
-
 //#include <xenpvdrivers/balloon.h>
 #include <xen/balloon.h>
-
 //#include <xenpvdrivers/asm/maddr.h>
 //#include <mach-xen/asm/maddr*.h>
-
 //#include <xenpvdrivers/grant_table.h>
 #include <xen/interface/grant_table.h>
 
-//int page;
+#define AUTHOR "Charles Xu <xuchi.int@gmail.com>"
+#define DESCRIPTION "MemNet architecture domu module"
 
 
 //module parameter
@@ -56,7 +50,7 @@ module_param(ip, charp, 0644);
 static int port;
 module_param(port, int, 0644);
 
-
+//int page;
 void *page;
 struct as_request
 {
@@ -190,7 +184,7 @@ int create_procfs_entry(char* filename)//create vitual folder and file
     return the proc_dir_entry pointer (NULL if failed)*/
 
 
-    proc_file = create_proc_entry(filename, 0600, proc_dir);
+    proc_file = create_proc_entry(filename, 0644, proc_dir);
     if (proc_file)
     {
         proc_file->read_proc = file_read;
@@ -253,7 +247,7 @@ again:
 }
 #endif
 
-int init_module(void)
+static int __init init_domumodule(void)
 {
     int mfn;
 #ifdef ENABLE_EVENT_IRQ
@@ -266,7 +260,7 @@ int init_module(void)
     printk("Ready to open %s and send to Dom0.\n Then send to ip = %s, port = %d",filename, ip, port);
 
 
-    //create_procfs_entry(filename);
+    create_procfs_entry(filename);
 
 
     /*
@@ -406,12 +400,13 @@ int init_module(void)
     info.port = irq_to_evtchn_port(info.irq);
     printk(" interupt = %d, local-port = %d", info.irq, info.port);
     printk("....\n...");
-    create_procfs_entry();
+    //----chix====
+    //create_procfs_entry();
 #endif
     return 0;
 }
 
-void cleanup_module(void)
+static void __exit cleanup_domumodule(void)
 {
     printk("\nCleanup grant ref:");
     if (gnttab_query_foreign_access(info.gref) == 0)
@@ -431,12 +426,15 @@ void cleanup_module(void)
     }
 
     /* Cleanup proc entry */
-    remove_proc_entry("file", proc_dir);
-    remove_proc_entry("demo", NULL);
+    remove_proc_entry(filename, NULL);
+
+    remove_proc_entry("memnet", proc_dir);
+
     printk("....\n...");
 }
 
-
-
+module_init(init_domumodule);
+module_exit(cleanup_domumodule);
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Charles Xu");
+MODULE_AUTHOR(AUTHOR);
+MODULE_DESCRIPTION(DESCRIPTION);
