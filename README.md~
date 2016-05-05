@@ -27,5 +27,5 @@ $dmesg <br>
 Step 8: The message in written by domu "chix:1234567890ABCDEF" is read and shown by dom0 <br>
 
 Step 9: Clean up by <br>
-$rmmod mndom0.ko  (in dom0) <br>
-$rmmod mndomu.ko (in domu) <br>
+$rmmod dom-.ko  (in dom0) <br>
+$rmmod xen-eg.ko (in domu) <br>

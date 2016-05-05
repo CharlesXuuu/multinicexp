@@ -19,8 +19,8 @@ In domU:
 
 //Compile
 1. make  
-//Insert as a kernel module
+//Insert as a kernel module (First run the domU part then run the dom0 part)
 2. insmod xen-eg.ko 
 //Show message
 3. dmesg
-//Record "gref=" and used as an input parameter 
+//Record "gref=" and used as an input parameter to run the dom0 part

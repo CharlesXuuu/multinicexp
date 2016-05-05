@@ -1,5 +1,5 @@
 
-obj-m += mndom0.o
+obj-m += dom-.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
