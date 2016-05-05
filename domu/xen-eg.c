@@ -41,6 +41,9 @@
 #define AUTHOR "Charles Xu <xuchi.int@gmail.com>"
 #define DESCRIPTION "MemNet architecture domu module"
 
+void test(){
+printk("test");
+}
 
 //module parameter
 static char *filename = "";
@@ -247,8 +250,7 @@ again:
 }
 #endif
 
-//int __init init_domumodule(void)
-int init_module()
+static int __init init_domumodule(void)
 {
     int mfn;
 #ifdef ENABLE_EVENT_IRQ
@@ -260,8 +262,8 @@ int init_module()
     //Command line parameter filename, ip, port
     printk("Ready to open %s and send to Dom0.\n Then send to ip = %s, port = %d",filename, ip, port);
 
-
-    create_procfs_entry(filename);
+    test();
+    //create_procfs_entry(filename);
 
 
     /*
@@ -407,8 +409,8 @@ int init_module()
     return 0;
 }
 
-//void __exit cleanup_domumodule(void)
-void cleanup_module()
+void __exit cleanup_domumodule(void)
+//void cleanup_module()
 {
     printk("\nCleanup grant ref:");
     if (gnttab_query_foreign_access(info.gref) == 0)
@@ -435,8 +437,8 @@ void cleanup_module()
     printk("....\n...");
 }
 
-//module_init(init_domumodule);
-//module_exit(cleanup_domumodule);
+module_init(init_domumodule);
+module_exit(cleanup_domumodule);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR(AUTHOR);
 MODULE_DESCRIPTION(DESCRIPTION);
