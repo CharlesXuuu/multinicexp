@@ -27,6 +27,32 @@
 #define DOM0_ID 0
 #define SHARED_MEM 1
 
+int page;
+
+struct as_request
+{
+    unsigned int id; /* private guest value echoed in resp */
+    unsigned int status;
+    unsigned int operation;
+};
+struct as_response
+{
+    unsigned int  id; /* copied from request */
+    unsigned int  status;
+    unsigned int  operation; /* copied from request */
+};
+
+DEFINE_RING_TYPES(as, struct as_request, struct as_response);
+
+struct info_t
+{
+    struct as_front_ring   ring;
+    grant_ref_t gref;
+    int irq;
+    int port;
+} info;
+
+#define DOM0_ID 0
 
 //module parameter
 static char *filename = "";
@@ -59,12 +85,13 @@ static int __init init_domumodule(void)
 
     fp =filp_open( filename ,O_RDWR | O_CREAT, 0644);
 
-     if (IS_ERR(fp)){
+    if (IS_ERR(fp))
+    {
         printk("DomU: cannot open file /n");
         return -1;
     }
 
-    fs =get_fs();
+    fs = get_fs();
     set_fs(KERNEL_DS);
 
     //if need to write file
@@ -72,8 +99,8 @@ static int __init init_domumodule(void)
     //vfs_write(fp,writebuf, sizeof(buf), &pos);
 
     pos =0;
-    vfs_read(fp,readbuff, sizeof(readbuff), &pos);
-    printk("read data: %s/n",readbuff);
+    vfs_read(fp, readbuf, sizeof(readbuf), &pos);
+    printk("read data: %s/n",readbuf);
 
     filp_close(fp,NULL);
     set_fs(fs);
