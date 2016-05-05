@@ -260,7 +260,7 @@ static int __init init_domumodule(void)
     printk("Ready to open %s and send to Dom0.\n Then send to ip = %s, port = %d",filename, ip, port);
 
 
-    create_procfs_entry();
+    //create_procfs_entry();
 
 
     /*
@@ -401,7 +401,7 @@ static int __init init_domumodule(void)
     printk(" interupt = %d, local-port = %d", info.irq, info.port);
     printk("....\n...");
     //----chix====
-    //create_procfs_entry();
+    create_procfs_entry();
 #endif
     return 0;
 }
