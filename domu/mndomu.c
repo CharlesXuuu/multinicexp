@@ -64,7 +64,7 @@ module_param(port, int, 0644);
 
 #define MAX_READBUFF_SIZE 128
 
-static char writebuf[] = "";
+//static char writebuf[] = "";
 static char readbuf[MAX_READBUFF_SIZE];
 
 static int __init init_domumodule(void)
@@ -137,7 +137,10 @@ static int __init init_domumodule(void)
     {
         printk("\nxen:DomU: could not get free page");
         return 0;
+    }else{
+        printk("free page allocated.")
     }
+
 
     mfn = virt_to_mfn(page);
 
@@ -154,7 +157,7 @@ static int __init init_domumodule(void)
 
     }
 
-    strcpy((char*)page, readbuf);
+    strcpy((char*)page, &readbuf);
 
     printk("\n gref = %d", info.gref);
     return 0;
