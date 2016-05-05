@@ -175,7 +175,7 @@ int create_procfs_entry(char* filename)//create vitual folder and file
     proc_dir = proc_mkdir("memnet", NULL);
     if (!proc_dir)
     {
-        printk("\nxen:domU Could not create demo entry in procfs");
+        printk("\nxen:domU Could not create memnet entry in procfs");
         ret = -EAGAIN;
         return ret;
     }
@@ -247,7 +247,7 @@ again:
 }
 #endif
 
-static int __init init_domumodule(void)
+int __init init_domumodule(void)
 {
     int mfn;
 #ifdef ENABLE_EVENT_IRQ
@@ -406,7 +406,7 @@ static int __init init_domumodule(void)
     return 0;
 }
 
-static void __exit cleanup_domumodule(void)
+void __exit cleanup_domumodule(void)
 {
     printk("\nCleanup grant ref:");
     if (gnttab_query_foreign_access(info.gref) == 0)
