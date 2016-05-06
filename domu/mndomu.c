@@ -27,30 +27,10 @@
 #define DOM0_ID 0
 #define SHARED_MEM 1
 
-int page;
+void *page;
 
-struct as_request
-{
-    unsigned int id; /* private guest value echoed in resp */
-    unsigned int status;
-    unsigned int operation;
-};
-struct as_response
-{
-    unsigned int  id; /* copied from request */
-    unsigned int  status;
-    unsigned int  operation; /* copied from request */
-};
+grant_ref_t gref;
 
-DEFINE_RING_TYPES(as, struct as_request, struct as_response);
-
-struct info_t
-{
-    struct as_front_ring   ring;
-    grant_ref_t gref;
-    int irq;
-    int port;
-} info;
 
 #define DOM0_ID 0
 
@@ -70,10 +50,6 @@ static char readbuf[MAX_READBUFF_SIZE];
 static int __init init_domumodule(void)
 {
     int mfn;
-#ifdef ENABLE_EVENT_IRQ
-    int err;
-#endif
-    struct as_sring *sring;
 
     //Use command line argument to parse a file
     //Command line parameter filename, ip, port
@@ -144,9 +120,9 @@ static int __init init_domumodule(void)
 
     mfn = virt_to_mfn(page);
 
-    info.gref = gnttab_grant_foreign_access(DOM0_ID, mfn, 0);
+    gref = gnttab_grant_foreign_access(DOM0_ID, mfn, 0);
 
-    if (info.gref < 0)
+    if (gref < 0)
     {
 
         printk("\nxen: could not grant foreign access");
@@ -160,9 +136,9 @@ static int __init init_domumodule(void)
     }
 
     //strcpy((char*)page, &readbuf);
-    //strcpy((char*)page, "chix:12345");
+    strcpy((char*)page, "chix:12345");
 
-    printk("\n gref = %d", info.gref);
+    printk("\n gref = %d", gref);
     return 0;
 }
 
@@ -170,20 +146,20 @@ void __exit cleanup_domumodule(void)
 //void cleanup_module()
 {
     printk("\nCleanup grant ref:");
-    if (gnttab_query_foreign_access(info.gref) == 0)
+    if (gnttab_query_foreign_access(gref) == 0)
     {
 //Remove the grant to the page
         printk("\n xen: No one has mapped this frame");
 
 // If 3rd param is non NULL, page has to be freed
-        gnttab_end_foreign_access(info.gref, 0, page);
+        gnttab_end_foreign_access(gref, 0, page);
 // free_pages(page,1);
     }
     else
     {
         printk("\n xen: Someone has mapped this frame");
 // Guess, we still free the page, since we are rmmod-ed
-        gnttab_end_foreign_access(info.gref, 0, page);
+        gnttab_end_foreign_access(gref, 0, page);
     }
 }
 
