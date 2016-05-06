@@ -34,17 +34,15 @@ struct gnttab_unmap_grant_ref unmap_ops;//撤销页映射
 
 
 int gref;
-int port;
+int domu;
 module_param(gref, int, 0644);//在domU中 gref port需要手动加入 init_module()
-module_param(port, int, 0644);//编写一个内核模块则通过module_param()传递参数
+module_param(domu, int, 0644);//编写一个内核模块则通过module_param()传递参数
 
 static int __init init_dom0module(void)
 {
     struct vm_struct *v_start;
 
 
-    int remoteDomain = 7;
-    int evtchn = port;
     printk("\nxen: dom0: init_module with gref = %d", gref);
 
     // The following function reserves a range of kernel address space and
@@ -60,7 +58,7 @@ static int __init init_dom0module(void)
 
 //分配内存
     gnttab_set_map_op(&ops, (unsigned long)v_start->addr, GNTMAP_host_map,
-                      gref, remoteDomain); /* flags, ref, domID */
+                      gref, domu); /* flags, ref, domID */
 //GNTTABOP_map_grant_ref  **操作码（映射到自己空间）
 //HYPERVISOR_grant_table_op超级调用
     if (HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref, &ops, 1))
@@ -85,7 +83,7 @@ static int __init init_dom0module(void)
     unmap_ops.handle = ops.handle;
 
 #define ENABLE_PRINT_PAGE 1
-#if ENABLE_PRINT_PAGE  //验证DomU page中写入的字符串"chix"
+#if ENABLE_PRINT_PAGE
     {
         int i;
         printk("\nBytes in page ");
