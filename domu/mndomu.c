@@ -135,10 +135,12 @@ static int __init init_domumodule(void)
         printk("Granted");
     }
 
+    printk("\n gref = %d", gref);
+
     //strcpy((char*)page, &readbuf);
     strcpy((char*)page, "chix:12345");
 
-    printk("\n gref = %d", gref);
+
     return 0;
 }
 
