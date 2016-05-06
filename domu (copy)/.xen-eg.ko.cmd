@@ -1,0 +1,1 @@
+cmd_/root/multinic/multinicexp/domu/xen-eg.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-85-generic/scripts/module-common.lds --build-id  -o /root/multinic/multinicexp/domu/xen-eg.ko /root/multinic/multinicexp/domu/xen-eg.o /root/multinic/multinicexp/domu/xen-eg.mod.o

@@ -1,0 +1,1 @@
+cmd_/home/chix/Reporsitory/multinicexp/domu/mndomu.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-85-generic/scripts/module-common.lds --build-id  -o /home/chix/Reporsitory/multinicexp/domu/mndomu.ko /home/chix/Reporsitory/multinicexp/domu/mndomu.o /home/chix/Reporsitory/multinicexp/domu/mndomu.mod.o
