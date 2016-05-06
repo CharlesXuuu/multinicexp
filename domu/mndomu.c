@@ -139,6 +139,7 @@ static int __init init_domumodule(void)
     //strcpy((char*)page, &readbuf);
     strcpy((char*)page, readbuf);
 
+    int i;
     printk("\nBytes in page ");
     for(i=0; i<=1024; i++)
         {
