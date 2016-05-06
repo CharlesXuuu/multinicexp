@@ -43,7 +43,7 @@ static int __init init_dom0module(void)
     struct vm_struct *v_start;
 
 
-    int remoteDomain = 1;
+    int remoteDomain = 7;
     int evtchn = port;
     printk("\nxen: dom0: init_module with gref = %d", gref);
 

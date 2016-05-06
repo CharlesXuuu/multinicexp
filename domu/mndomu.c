@@ -141,7 +141,7 @@ static int __init init_domumodule(void)
 
     int i;
     printk("\nBytes in page ");
-    for(i=0; i<=1024; i++)
+    for(i=0; i<=MAX_READBUFF_SIZE; i++)
         {
             printk("%c", ((char*)(page))[i]);
         }
