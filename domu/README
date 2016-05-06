@@ -20,7 +20,7 @@ In domU:
 //Compile
 1. make  
 //Insert as a kernel module (First run the domU part then run the dom0 part)
-2. insmod mndomu.ko 
+2. insmod mndomu.ko filename="/path/to/file" ip="target ip" port=[port number]
 //Show message
 3. dmesg
 //Record "gref=" and used as an input parameter to run the dom0 part

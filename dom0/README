@@ -20,6 +20,6 @@ In dom0:
 //Compile
 1. make  
 //Insert as a kernel module
-2. insmod dom-.ko gref=#
+2. insmod mndom0.ko gref=XXX domu=[domu id]
 //Show message
 3. dmesg
