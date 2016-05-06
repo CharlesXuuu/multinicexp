@@ -42,7 +42,7 @@ module_param(ip, charp, 0644);
 static int port;
 module_param(port, int, 0644);
 
-#define MAX_READBUFF_SIZE 8
+#define MAX_READBUFF_SIZE 1024
 
 //static char writebuf[] = "";
 static char readbuf[MAX_READBUFF_SIZE];
@@ -139,6 +139,10 @@ static int __init init_domumodule(void)
     //strcpy((char*)page, &readbuf);
     strcpy((char*)page, readbuf);
 
+    for(i=0; i<=1024; i++)
+        {
+            printk("%c", ((char*)(page))[i]);
+        }
 
     return 0;
 }
