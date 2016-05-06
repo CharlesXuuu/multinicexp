@@ -60,7 +60,7 @@ static int __init init_dom0module(void)
 
 //分配内存
     gnttab_set_map_op(&ops, (unsigned long)v_start->addr, GNTMAP_host_map,
-                      info.gref, info.remoteDomain); /* flags, ref, domID */
+                      gref, remoteDomain); /* flags, ref, domID */
 //GNTTABOP_map_grant_ref  **操作码（映射到自己空间）
 //HYPERVISOR_grant_table_op超级调用
     if (HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref, &ops, 1))
