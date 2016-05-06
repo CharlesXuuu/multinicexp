@@ -42,7 +42,7 @@ module_param(ip, charp, 0644);
 static int port;
 module_param(port, int, 0644);
 
-#define MAX_READBUFF_SIZE 1024
+#define MAX_READBUFF_SIZE 8
 
 //static char writebuf[] = "";
 static char readbuf[MAX_READBUFF_SIZE];
@@ -137,7 +137,7 @@ static int __init init_domumodule(void)
     printk("gref = %d\n\n\n", gref);
 
     //strcpy((char*)page, &readbuf);
-    strcpy((char*)page, "chix:12345");
+    strcpy((char*)page, readbuf);
 
 
     return 0;
