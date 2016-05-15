@@ -1,4 +1,7 @@
 # multinicexp
+Current Version: Loadable kernel modules in both Domain-U and Domain-0 <br>
+Read a file in Domain-U kernel RAM space, record grant reference. <br> 
+Domain-0 use the grant reference map the file in Domain-0 kernel space<br>
 
 Step 1: in domu compile the source code by <br>
 $make clean <br>
